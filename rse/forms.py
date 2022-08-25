@@ -245,9 +245,12 @@ class AllocatedProjectForm(forms.ModelForm):
 
     class Meta:
         model = AllocatedProject
-        fields = ['proj_costing_id', 'name', 'description', 'client', 'internal', 'start', 'end', 'status', 'percentage', 'overheads', 'salary_band', 'created', 'creator']
+        fields = ['proj_costing_id', 'funder_ref', 'grant_number', 'name', 'description', 'client', 'internal',
+                  'start', 'end', 'status', 'percentage', 'overheads', 'staff_budget', 'created', 'creator']
         widgets = {
             'proj_costing_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'funder_ref': forms.TextInput(attrs={'class': 'form-control'}),
+            'grant_number': forms.TextInput(attrs={'class': 'form-control'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
@@ -255,7 +258,7 @@ class AllocatedProjectForm(forms.ModelForm):
             'status': forms.Select(choices=Project.STATUS_CHOICES, attrs={'class': 'form-control pull-right'}),
             'percentage': forms.NumberInput(attrs={'class': 'form-control'}),
             'overheads': forms.NumberInput(attrs={'class': 'form-control'}),
-            'salary_band': forms.Select(attrs={'class': 'form-control'}),
+            'staff_budget': forms.NumberInput(attrs={'class': 'form-control'}),
             'creator': forms.HiddenInput(),
             'created': forms.HiddenInput(),
         }
@@ -394,7 +397,7 @@ class ServiceProjectForm(forms.ModelForm):
                     raise ValidationError('There are current allocations on this project which end after the proposed end date')
 
         return cleaned_end
-        
+
     def clean_rate(self):
         """
         Check the service rate is greater than 0
@@ -406,16 +409,16 @@ class ServiceProjectForm(forms.ModelForm):
             raise ValidationError('The service rate must be greater than 0')
 
         return cleaned_rate
-               
-            
-class ClientForm(forms.ModelForm):    
+
+
+class ClientForm(forms.ModelForm):
 
     """
     Class for creation and editing of a client
     """
     class Meta:
         model = Client
-        fields = ['name', 'department', 'description']
+        fields = ['name', 'department', 'division', 'description']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
@@ -602,7 +605,7 @@ class NewFinancialYearForm(forms.ModelForm):
     """
     Class represents a form for creating a new salary band with a given year
     """
-    copy_from = forms.ModelChoiceField(queryset=FinancialYear.objects.all(), 
+    copy_from = forms.ModelChoiceField(queryset=FinancialYear.objects.all(),
                                        empty_label="",
                                        required=False,
                                        widget=forms.Select(attrs={'class': 'form-control pull-right'}))

@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render
-from django.db.models import Max, Min, ProtectedError 
+from django.db.models import Max, Min, ProtectedError
 from django.db import IntegrityError
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -27,7 +27,7 @@ from rse.forms import *
 #########################
 
 def append_project_and_allocation_costs(request: HttpRequest, project: Project, allocations: TypedQuerySet[RSEAllocation]):
-    
+
     # calculate project budget and effort
     total_value = project.value()
 
@@ -36,7 +36,7 @@ def append_project_and_allocation_costs(request: HttpRequest, project: Project, 
         staff_budget = total_value
     # allocated project
     else:
-        staff_budget = project.staff_budget()
+        staff_budget = project.staff_budget_value()
 
     # calculate staff costs and overheads
     total_staff_cost = 0
@@ -61,7 +61,7 @@ def append_project_and_allocation_costs(request: HttpRequest, project: Project, 
         project.percent_total_budget = project.staff_cost / total_value * 100.0 if total_value!= 0 else 0
         project.remaining_surplus = total_value - total_staff_cost
     # allocated project
-    else:   
+    else:
         project.total_value = total_value
         project.staff_budget = staff_budget
         project.overhead = project.overhead_value()
@@ -69,5 +69,5 @@ def append_project_and_allocation_costs(request: HttpRequest, project: Project, 
         # catch div by zero if duration is 0
         project.percent_staff_budget = project.staff_cost / staff_budget * 100.0 if staff_budget != 0 else 0
         project.remaining_staff_budget = staff_budget - total_staff_cost
-        
+
 
