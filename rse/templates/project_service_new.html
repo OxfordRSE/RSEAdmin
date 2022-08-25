@@ -43,8 +43,18 @@
 									</td></tr>
 									
 									<tr><td>
-									<strong>Project Internal ID (URMS or equivalent):</strong>
+									<strong>Costing ID (X5 or equivalent):</strong>
 									{{ form.proj_costing_id}}
+									</td></tr>
+
+									<tr><td>
+									<strong>Funder Reference:</strong>
+									{{ form.funder_ref}}
+									</td></tr>
+
+									<tr><td>
+									<strong>Grant Number:</strong>
+									{{ form.grant_number}}
 									</td></tr>
 									
 									<tr><td>
@@ -181,6 +191,7 @@
 	//Start Date Picker
 	$('#{{form.start.id_for_label}}').daterangepicker({
 		singleDatePicker: true,
+		autoApply: true,
 		locale: {
 			"format": "DD/MM/YYYY"
 		},
@@ -188,6 +199,7 @@
 	//End date picker
 	$('#{{form.end.id_for_label}}').daterangepicker({
 		singleDatePicker: true,
+		autoApply: true,
 		locale: {
 			"format": "DD/MM/YYYY"
 		},
@@ -195,6 +207,7 @@
 	//Invoice receievd date picker
 	$('#{{form.invoice_received.id_for_label}}').daterangepicker({
 		singleDatePicker: true,
+		autoApply: true,
 		autoUpdateInput: false,
 		locale: {
 			"format": "DD/MM/YYYY"

@@ -405,7 +405,8 @@ class RSE(models.Model):
         if not self.employed_from:
             return False
 
-        if self.employed_from < until_date and self.employed_until > from_date:
+        if self.employed_from < until_date and (self.employed_until is None or
+                                                self.employed_until > from_date):
             return True
         else:
             return False
@@ -427,7 +428,7 @@ class RSE(models.Model):
         # Restrict from and until dates based off employment start and end
         if self.employed_from > from_date:
             from_date = self.employed_from
-        if self.employed_until < until_date:
+        if self.employed_until is not None and self.employed_until < until_date:
             until_date = self.employed_until
 
         # Get the last salary grade charge for the RSE at the start of the cost query
@@ -662,9 +663,9 @@ class Project(PolymorphicModel):
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     created = models.DateTimeField()
 
-    proj_costing_id = models.CharField(max_length=50, null=True)    # Internal costing code
-    funder_ref = models.CharField(max_length=50, null=True)    # funder code
-    grant_number = models.CharField(max_length=50, null=True)    # Internal grant number
+    proj_costing_id = models.CharField(max_length=50, null=True, blank=True)    # Internal costing code
+    funder_ref = models.CharField(max_length=50, null=True, blank=True)    # funder code
+    grant_number = models.CharField(max_length=50, null=True, blank=True)    # Internal grant number
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
@@ -809,8 +810,6 @@ class Project(PolymorphicModel):
         return self.name
 
     def clean(self):
-        if self.status != 'P' and not self.proj_costing_id:
-            raise ValidationError(_('Project proj_costing_id cannot be null if the grant has passed the preparation stage.'))
         if self.start and self.end and self.end < self.start:
             raise ValidationError(_('Project end cannot be earlier than project start.'))
 

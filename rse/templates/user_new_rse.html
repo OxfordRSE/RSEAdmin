@@ -150,6 +150,8 @@
 	//Start Date Picker
 	$('#{{rse_form.employed_from.id_for_label}}').daterangepicker({
 		singleDatePicker: true,
+		autoUpdateInput: true,
+		autoApply: true,
 		locale: {
 			"format": "DD/MM/YYYY"
 		},
@@ -159,10 +161,16 @@
 	//End date picker
 	$('#{{rse_form.employed_until.id_for_label}}').daterangepicker({
 		singleDatePicker: true,
+		autoUpdateInput: false,
+		autoApply: true,
 		locale: {
-			"format": "DD/MM/YYYY"
+			"format": "DD/MM/YYYY",
 		},
 	});
+
+	$('#{{rse_form.employed_until.id_for_label}}').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD/MM/YYYY'));
+  });
 
 
 

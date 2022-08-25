@@ -208,7 +208,7 @@ class ProjectAllocationForm(forms.ModelForm):
                 errors['start'] = ('RSE does not have a start date of employment (i.e. no salary grade change)')
             elif rse.employed_from > cleaned_data['start']:
                 errors['start'] = ('Allocation start date is before RSE is employed')
-            if rse.employed_until < cleaned_data['end']:
+            if rse.employed_until is not None and rse.employed_until < cleaned_data['end']:
                 errors['end'] = ('Allocation end date is after RSE is employed')
 
         # Validation checks that the dates are correct (no need to raise errors if fields are empty as they are required so superclass will have done this)
@@ -329,9 +329,11 @@ class ServiceProjectForm(forms.ModelForm):
 
     class Meta:
         model = ServiceProject
-        fields = ['proj_costing_id', 'name', 'description', 'client', 'internal', 'start', 'end', 'status', 'days', 'rate', 'charged', 'invoice_received', 'created', 'creator']
+        fields = ['proj_costing_id', 'funder_ref', 'grant_number', 'name', 'description', 'client', 'internal', 'start', 'end', 'status', 'days', 'rate', 'charged', 'invoice_received', 'created', 'creator']
         widgets = {
             'proj_costing_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'funder_ref': forms.TextInput(attrs={'class': 'form-control'}),
+            'grant_number': forms.TextInput(attrs={'class': 'form-control'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
@@ -530,7 +532,7 @@ class EditRSEUserForm(forms.ModelForm):
 
     employed_until = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'),
                                      attrs={'class': 'form-control'}),
-                                     input_formats=('%d/%m/%Y',))
+                                     input_formats=('%d/%m/%Y',), required=False)
 
     class Meta:
         model = RSE
@@ -548,7 +550,7 @@ class NewRSEUserForm(forms.ModelForm):
                                     input_formats=('%d/%m/%Y',))
     employed_until = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'),
                                      attrs={'class': 'form-control'}),
-                                     input_formats=('%d/%m/%Y',))
+                                     input_formats=('%d/%m/%Y',), required=False)
     salary_band = forms.ModelChoiceField(queryset=SalaryBand.objects.all(),
                                          empty_label=None,
                                          required=True,
@@ -677,7 +679,7 @@ class SalaryGradeChangeForm(forms.ModelForm):
                 errors['date'] = ('A salary grade change for the specified year already exists for the RSE!')
 
             # Check that the salary grade change is not after the RSE is employed
-            if d > employed_until:
+            if employed_until is not None and d > employed_until:
                 errors['date'] = ('Proposed salary grade change is after the rse is employed')
 
         if errors:
